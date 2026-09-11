@@ -3,14 +3,26 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Install only what the camera-service needs at runtime
-COPY anubis-guardian/services/camera-service/package*.json ./
+# Camera service dependencies
+COPY anubis-guardian/services/camera-service/package*.json /app/camera-service/
+WORKDIR /app/camera-service
 RUN npm ci --omit=dev --ignore-scripts
+WORKDIR /app
 
-COPY anubis-guardian/services/camera-service/index.js ./
-COPY anubis-guardian/services/camera-service/camera-service.test.js ./
+# Camera service source
+COPY anubis-guardian/services/camera-service/index.js /app/camera-service/
+COPY anubis-guardian/services/camera-service/camera-service.test.js /app/camera-service/
+
+# Recording service dependencies
+COPY anubis-guardian/services/recording-service/package*.json /app/recording-service/
+WORKDIR /app/recording-service
+RUN npm ci --omit=dev --ignore-scripts
+WORKDIR /app
+
+# Recording service source
+COPY anubis-guardian/services/recording-service/index.js /app/recording-service/
+COPY anubis-guardian/services/recording-service/recording-service.test.js /app/recording-service/
 
 EXPOSE 8080
-
 ENV NODE_ENV=production
-CMD ["node", "index.js"]
+CMD ["node", "camera-service/index.js"]

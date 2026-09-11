@@ -300,7 +300,7 @@ ansible-playbook -i inventory deploy.yml
 - [x] Docker containerization setup
 
 ### Not Yet Started ⬜
-- [ ] Recording service implementation (no code on disk)
+- [x] Recording service implementation (FFmpeg capture, storage management, Docker-ready)
 - [ ] Web UI development (no code on disk)
 - [ ] Mobile PWA creation (no code on disk)
 - [ ] Private connection methods (no code on disk)

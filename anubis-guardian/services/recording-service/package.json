@@ -1,0 +1,15 @@
+{
+  "name": "recording-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "ANUBIS recording service — captures camera streams to disk via FFmpeg",
+  "dependencies": {
+    "axios": "^1.10.0"
+  }
+}

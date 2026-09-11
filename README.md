@@ -299,12 +299,12 @@ ansible-playbook -i inventory deploy.yml
 - [x] Optimization analysis and performance tuning
 - [x] Docker containerization setup
 
-### In Progress 🚧
-- [ ] Recording service implementation
-- [ ] Web UI development
-- [ ] Mobile PWA creation
-- [ ] Private connection methods
-- [ ] AI-powered motion detection
+### Not Yet Started ⬜
+- [ ] Recording service implementation (no code on disk)
+- [ ] Web UI development (no code on disk)
+- [ ] Mobile PWA creation (no code on disk)
+- [ ] Private connection methods (no code on disk)
+- [ ] AI-powered motion detection (no code on disk)
 
 ### Planned Features 🔮
 - [ ] Multi-user authentication

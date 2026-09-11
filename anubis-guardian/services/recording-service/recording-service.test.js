@@ -59,6 +59,16 @@ test('getStorageUsage after cleanup returns zeros', () => {
   assert.strictEqual(usage.fileCount, 0);
 });
 
+test('recordStream rejects zero or negative duration', async () => {
+  await assert.rejects(mod.recordStream(camera, { duration: 0 }), /duration must be a positive number/);
+  await assert.rejects(mod.recordStream(camera, { duration: -5 }), /duration must be a positive number/);
+  await assert.rejects(mod.recordStream(camera, { duration: 'abc' }), /duration must be a positive number/);
+});
+
+test('recordStream rejects NaN duration', async () => {
+  await assert.rejects(mod.recordStream(camera, { duration: NaN }), /duration must be a positive number/);
+});
+
 // OBJ-007 / REQ-REC-007: integration test with real FFmpeg (lavfi test pattern)
 test('recordStream captures a 1s lavfi test pattern to a real MP4', async () => {
   const srcCamera = { ip: '127.0.0.1', port: 9999, streamUrl: 'testsrc=duration=1:size=320x240:rate=10', type: 'lavfi' };

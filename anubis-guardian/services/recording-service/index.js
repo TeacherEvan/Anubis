@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 
-const OUTPUT_DIR = process.env.OUTPUT_DIR || path.join(os.tmpdir(), 'anubis-recordings');
+const OUTPUT_DIR = process.env.OUTPUT_DIR || path.join(process.cwd(), 'recordings');
 const MAX_CONCURRENT = parseInt(process.env.MAX_CONCURRENT_RECORDINGS, 10) || 5;
 const FFMPEG_PATH = process.env.FFMPEG_PATH || 'ffmpeg';
 
@@ -22,7 +22,7 @@ function sanitizeIp(ip) {
 }
 
 function buildRecordingFilename(cameraIp, duration) {
-  const ts = new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 15);
+  const ts = new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
   const safe = sanitizeIp(cameraIp);
   return `${safe}_${ts}_${duration}s.mp4`;
 }
@@ -44,6 +44,9 @@ function buildFfmpegArgs(camera, outputPath, duration) {
 function recordStream(camera, options = {}) {
   if (!camera || typeof camera !== 'object') return Promise.reject(new Error('camera object required'));
   const { duration = 60, outputPath = OUTPUT_DIR } = options;
+  if (!Number.isFinite(duration) || duration <= 0) {
+    return Promise.reject(new Error(`duration must be a positive number, got: ${duration}`));
+  }
   if (activeRecordings.size >= MAX_CONCURRENT) {
     return Promise.reject(new Error(`Max concurrent recordings (${MAX_CONCURRENT}) reached`));
   }
@@ -129,7 +132,9 @@ function listRecordings(cameraIp, options = {}) {
 
 function getRecording(recordingId) {
   ensureOutputDir();
-  const files = fs.readdirSync(OUTPUT_DIR).filter(f => f.endsWith('.mp4'));
+  const safe = sanitizeIp(recordingId.split('_')[0]);
+  const files = fs.readdirSync(OUTPUT_DIR)
+    .filter(f => f.startsWith(safe) && f.endsWith('.mp4'));
   for (const f of files) {
     if (f.includes(recordingId) || recordingId === f) {
       const fp = path.join(OUTPUT_DIR, f);

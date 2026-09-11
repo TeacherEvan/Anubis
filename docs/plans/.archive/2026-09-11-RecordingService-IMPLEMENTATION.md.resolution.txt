@@ -1,0 +1,9 @@
+RESOLUTION: DONE (verified 2026-09-11 by surgical-implementation audit)
+All 9 objectives (OBJ-001..OBJ-009) verified against live code + gates:
+  - npm test (recording-service): 11/11 pass incl. real FFmpeg lavfi integration test
+  - npm test (camera-service): 4/4 pass
+  - docker build: exit 0
+  - README checklist: [x] marked
+  - No secrets, no console.log, no TODO/FIXME, path traversal guard present
+Plan status banner ("IN PROGRESS") was stale — code was already committed in ff8a603.
+Archived per plan-discovery-and-archive.md: doc status lies, code state decides.

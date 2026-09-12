@@ -1,0 +1,19 @@
+CODE REVIEW — Recording Service (2026-09-13, surgical-implementation fast-path)
+Scope: anubis-guardian/services/recording-service/, Dockerfile, README.md
+Verdict: PASS (0 CRITICAL, 0 HIGH, 1 LOW, 0 STYLE)
+
+Gates re-run live (not trusted from archive):
+- recording-service npm test: 11/11 pass (incl. real FFmpeg lavfi integration, 88ms)
+- camera-service npm test: 4/4 pass
+- docker build: exit 0
+- README checklist line 303: [x] marked
+- Secret scan (Bearer/Token/ApiKey/secret/password): 0 hits in source
+- TODO/FIXME in source: 0 (all hits are node_modules only)
+
+Findings:
+- LOW-01: getRecording() returns {recordingId, filename, filePath, size, mtime}
+  but REQ-REC-005 spec lists {recordingId, cameraIp, filePath, startTime, duration, size}.
+  Internal service, no consumer broken, tests pass. Recommend aligning shape or
+  updating the spec doc. Not a blocker.
+
+No CRITICAL/HIGH findings -> no orchestration jobs to spawn. Loop closed.

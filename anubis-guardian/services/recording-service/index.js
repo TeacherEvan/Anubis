@@ -130,6 +130,20 @@ function listRecordings(cameraIp, options = {}) {
   return files;
 }
 
+function parseRecordingFilename(f) {
+  // {cameraIp}_{YYYYMMDD_HHMMSS}_{duration}s.mp4
+  const m = f.match(/^(.+)_(\d{14})_(\d+)s\.mp4$/);
+  if (!m) return null;
+  const [, ip, ts, dur] = m;
+  const y = ts.slice(0, 4), mo = ts.slice(4, 6), d = ts.slice(6, 8),
+        hh = ts.slice(8, 10), mm = ts.slice(10, 12), ss = ts.slice(12, 14);
+  return {
+    cameraIp: ip,
+    startTime: new Date(`${y}-${mo}-${d}T${hh}:${mm}:${ss}Z`).toISOString(),
+    duration: parseInt(dur, 10),
+  };
+}
+
 function getRecording(recordingId) {
   ensureOutputDir();
   const safe = sanitizeIp(recordingId.split('_')[0]);
@@ -139,7 +153,16 @@ function getRecording(recordingId) {
     if (f.includes(recordingId) || recordingId === f) {
       const fp = path.join(OUTPUT_DIR, f);
       const stats = fs.statSync(fp);
-      return { recordingId, filename: f, filePath: fp, size: stats.size, mtime: stats.mtime };
+      const parsed = parseRecordingFilename(f) || {};
+      return {
+        recordingId,
+        cameraIp: parsed.cameraIp || safe,
+        filePath: fp,
+        startTime: parsed.startTime || stats.mtime.toISOString(),
+        duration: parsed.duration || 0,
+        size: stats.size,
+        filename: f,
+      };
     }
   }
   return null;

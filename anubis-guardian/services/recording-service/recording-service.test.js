@@ -38,6 +38,23 @@ test('getRecording returns null for unknown id', () => {
   assert.strictEqual(result, null);
 });
 
+test('getRecording returns spec-compliant shape for a fixture file', () => {
+  const fname = '192.168.1.10_20260911120000_5s.mp4';
+  fs.writeFileSync(path.join(TMP, fname), Buffer.alloc(1024));
+  try {
+    const r = mod.getRecording('192.168.1.10_20260911120000_5');
+    assert.ok(r, 'expected recording object');
+    assert.strictEqual(r.filename, fname);
+    assert.strictEqual(r.cameraIp, '192.168.1.10');
+    assert.ok(r.filePath.endsWith(fname));
+    assert.strictEqual(r.duration, 5);
+    assert.ok(r.size > 0);
+    assert.ok(r.startTime);
+  } finally {
+    fs.rmSync(path.join(TMP, fname), { force: true });
+  }
+});
+
 test('stopRecording rejects for unknown id', async () => {
   await assert.rejects(mod.stopRecording('unknown_id'), /Recording not found/);
 });
